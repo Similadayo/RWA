@@ -37,9 +37,66 @@
   gap: 0.5rem;
 }
 
+.mb-sm {
+  margin-bottom: 0.5rem;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.styled-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: 0.6rem 0.8rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.styled-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+select.styled-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1em;
+}
+
+.section-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
 .styled-textarea {
   width: 100%;
-  min-height: 180px;
+  min-height: 140px;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
@@ -60,6 +117,11 @@
   line-height: 1.6;
   background: rgba(15, 17, 21, 0.5);
   font-family: var(--font-family);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.editable-output:focus {
+  border-color: var(--accent-primary);
 }
 
 .action-row {
@@ -132,14 +194,93 @@
   gap: 1rem;
 }
 
-.instruction-text {
-  font-size: 0.85rem;
-  color: var(--warning);
+/* Trust Markers & Input Trace */
+.input-trace {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--border-radius-sm);
+  border-left: 3px solid var(--accent-secondary);
 }
 
-.approval-row {
+.trace-title {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.trace-badges {
   display: flex;
-  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.trace-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
+/* Audit Trail */
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.audit-trail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.audit-step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.audit-step.active {
+  color: var(--text-primary);
+}
+
+.audit-step.pending {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.audit-step .node {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.audit-step.active .node {
+  background-color: var(--success);
+  box-shadow: 0 0 6px var(--success);
+}
+
+.audit-line {
+  width: 24px;
+  height: 2px;
+  background-color: var(--border-color);
+}
+
+.audit-line.active {
+  background-color: var(--success);
+  opacity: 0.5;
 }
 
 .approve-button {

@@ -1,23 +1,37 @@
-import { useState } from 'react';
-import { Sparkles, Check, Copy } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Sparkles, Check, Copy, User, FileText, Activity } from 'lucide-react';
 import './SummarizeNotes.css';
 
+type AuditState = 'waiting' | 'generated' | 'edited' | 'approved';
+
 export default function SummarizeNotes() {
+  // Candidate Profile State
+  const [candidateName, setCandidateName] = useState('');
+  const [currentRole, setCurrentRole] = useState('');
+  const [yoe, setYoe] = useState('');
+  const [targetRole, setTargetRole] = useState('');
+  const [location, setLocation] = useState('');
+  const [salary, setSalary] = useState('');
+  const [stage, setStage] = useState('Recruiter Screen');
+
   const [inputNotes, setInputNotes] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [summary, setSummary] = useState('');
-  const [isApproved, setIsApproved] = useState(false);
+  
+  // Audit Trail State
+  const [auditState, setAuditState] = useState<AuditState>('waiting');
+  const [originalSummary, setOriginalSummary] = useState('');
 
   const handleGenerate = () => {
     if (!inputNotes.trim()) return;
     
     setIsProcessing(true);
     setSummary('');
-    setIsApproved(false);
+    setAuditState('waiting');
     
     // Simulate AI processing time
     setTimeout(() => {
-      setSummary(`## Candidate Summary
+      const generated = `## Candidate Summary for ${candidateName || 'Candidate'}
 
 **Strengths:**
 - Strong communication skills
@@ -25,38 +39,90 @@ export default function SummarizeNotes() {
 - Good problem solving approach during the pair programming session
 
 **Experience Highlights:**
-- 4 years at previous role leading frontend transitions
+- ${yoe || 'Several'} years of experience, recently as ${currentRole || 'an Engineer'}
 - Mentored 2 junior developers
 
-**Risks/Concerns:**
-- Less experience with cloud deployment pipelines
-- Expected salary is at the top of our band
+**Areas for Clarification (Open Questions):**
+- Validate deep experience with cloud deployment pipelines
+- Expected salary (${salary || 'undisclosed'}) is at the top of our band; need to confirm flexibility
+- Relocation requirements for ${location || 'the role location'}
 
 **Recommendation:**
-Proceed to final team interview, focusing on architectural system design.`);
+Proceed to next stage past ${stage}, focusing on architectural system design.`;
+
+      setSummary(generated);
+      setOriginalSummary(generated);
+      setAuditState('generated');
       setIsProcessing(false);
     }, 2500);
   };
 
+  const handleTextEdit = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSummary(e.target.value);
+    if (auditState === 'generated' && e.target.value !== originalSummary) {
+      setAuditState('edited');
+    }
+  };
+
   const handleApprove = () => {
-    setIsApproved(true);
+    setAuditState('approved');
     navigator.clipboard.writeText(summary);
-    // In a real app, this might save to an ATS
   };
 
   return (
     <div className="summarize-container">
       <div className="input-section glass-panel">
-        <div className="section-header flex-between">
-          <h3>Raw Interview Notes</h3>
-          <span className="badge">Input</span>
+        <div className="section-header flex-between mb-sm">
+          <h3>Candidate Profile & Notes</h3>
+          <span className="badge">Inputs</span>
         </div>
-        <textarea
-          className="styled-textarea"
-          placeholder="Paste transcribed notes, quick jots, or messy interview feedback here..."
-          value={inputNotes}
-          onChange={(e) => setInputNotes(e.target.value)}
-        />
+        
+        <div className="profile-grid">
+          <div className="form-group">
+            <label>Name</label>
+            <input className="styled-input" placeholder="e.g. Alex Chen" value={candidateName} onChange={e => setCandidateName(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>Current Role</label>
+            <input className="styled-input" placeholder="e.g. Frontend Dev" value={currentRole} onChange={e => setCurrentRole(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>Years of Exp.</label>
+            <input className="styled-input" placeholder="e.g. 4" value={yoe} onChange={e => setYoe(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>Target Role</label>
+            <input className="styled-input" placeholder="e.g. Senior Frontend" value={targetRole} onChange={e => setTargetRole(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>Location</label>
+            <input className="styled-input" placeholder="e.g. Remote, NY" value={location} onChange={e => setLocation(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>Salary Expectation</label>
+            <input className="styled-input" placeholder="e.g. $150k" value={salary} onChange={e => setSalary(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label>Process Stage</label>
+            <select className="styled-input" value={stage} onChange={e => setStage(e.target.value)}>
+              <option>Recruiter Screen</option>
+              <option>Hiring Manager</option>
+              <option>Technical Assessment</option>
+              <option>Final Interview</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="notes-container">
+          <label className="section-label">Raw Interview Notes</label>
+          <textarea
+            className="styled-textarea"
+            placeholder="Paste transcribed notes, quick jots, or messy interview feedback here..."
+            value={inputNotes}
+            onChange={(e) => setInputNotes(e.target.value)}
+          />
+        </div>
+
         <div className="action-row">
           <button 
             className="primary-button flex-center gap-sm" 
@@ -78,7 +144,7 @@ Proceed to final team interview, focusing on architectural system design.`);
           <div className="section-header flex-between">
             <h3>Cleaned Candidate Brief</h3>
             <span className="badge variant-ai flex-center gap-sm">
-              <Sparkles size={12} /> AI Generated
+              <Sparkles size={12} /> AI Assisted
             </span>
           </div>
           
@@ -89,20 +155,46 @@ Proceed to final team interview, focusing on architectural system design.`);
             </div>
           ) : (
              <div className="result-area">
-                <p className="instruction-text">Review and edit the summary before saving to the candidate record.</p>
+                
+                <div className="input-trace">
+                  <span className="trace-title">Sources Used:</span>
+                  <div className="trace-badges">
+                    <span className="trace-badge"><FileText size={12}/> Interview Notes</span>
+                    {candidateName && <span className="trace-badge"><User size={12}/> Profile: {candidateName}</span>}
+                    <span className="trace-badge"><Activity size={12}/> Stage: {stage}</span>
+                  </div>
+                </div>
+
                 <textarea
                   className="styled-textarea editable-output"
                   value={summary}
-                  onChange={(e) => setSummary(e.target.value)}
+                  onChange={handleTextEdit}
                 />
                 
-                <div className="approval-row">
+                <div className="footer-row">
+                  <div className="audit-trail">
+                    <div className="audit-step active">
+                      <div className="node"></div>
+                      <span>Draft Generated</span>
+                    </div>
+                    <div className="audit-line active"></div>
+                    <div className={`audit-step ${auditState === 'edited' || auditState === 'approved' ? 'active' : 'pending'}`}>
+                      <div className="node"></div>
+                      <span>Recruiter Edited</span>
+                    </div>
+                    <div className={`audit-line ${auditState === 'approved' ? 'active' : 'pending'}`}></div>
+                    <div className={`audit-step ${auditState === 'approved' ? 'active' : 'pending'}`}>
+                      <div className="node"></div>
+                      <span>Approved ATS Sync</span>
+                    </div>
+                  </div>
+
                   <button 
-                    className={`approve-button flex-center gap-sm ${isApproved ? 'approved' : ''}`}
+                    className={`approve-button flex-center gap-sm ${auditState === 'approved' ? 'approved' : ''}`}
                     onClick={handleApprove}
                   >
-                    {isApproved ? <Check size={18} /> : <Copy size={18} />}
-                    {isApproved ? 'Approved & Copied' : 'Approve & Copy to ATS'}
+                    {auditState === 'approved' ? <Check size={18} /> : <Copy size={18} />}
+                    {auditState === 'approved' ? 'Approved & Synced' : 'Approve & Copy to ATS'}
                   </button>
                 </div>
              </div>
