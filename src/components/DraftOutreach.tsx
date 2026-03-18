@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Sparkles, Check, Copy, Send } from 'lucide-react';
+import { useToast } from '../contexts/ToastContext';
 import './DraftOutreach.css';
 
 export default function DraftOutreach() {
+  const { showToast } = useToast();
   const [candidateName, setCandidateName] = useState('');
   const [roleContext, setRoleContext] = useState('');
   const [outreachType, setOutreachType] = useState('initial');
@@ -60,6 +62,7 @@ export default function DraftOutreach() {
   const handleApprove = () => {
     setIsApproved(true);
     navigator.clipboard.writeText(draft);
+    showToast('Draft successfully copied to clipboard!');
   };
 
   return (

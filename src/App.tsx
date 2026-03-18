@@ -10,6 +10,8 @@ import {
 import './App.css';
 import SummarizeNotes from './components/SummarizeNotes';
 import DraftOutreach from './components/DraftOutreach';
+import RefineJD from './components/RefineJD';
+import CandidateSearch from './components/CandidateSearch';
 
 type WorkflowType = 'summarize' | 'draft' | 'search' | 'refine';
 
@@ -22,8 +24,10 @@ function App() {
         return <SummarizeNotes />;
       case 'draft':
         return <DraftOutreach />;
-      case 'search':
       case 'refine':
+        return <RefineJD />;
+      case 'search':
+        return <CandidateSearch />;
       default:
         return (
           <div className="flex-center" style={{ height: '300px', flexDirection: 'column', gap: '1rem', color: 'var(--text-muted)' }}>

@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Sparkles, Check, Copy, User, FileText, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, Check, Copy, User, FileText, Activity, FileSearch } from 'lucide-react';
+import { useToast } from '../contexts/ToastContext';
 import './SummarizeNotes.css';
 
 type AuditState = 'waiting' | 'generated' | 'edited' | 'approved';
 
 export default function SummarizeNotes() {
+  const { showToast } = useToast();
+
   // Candidate Profile State
   const [candidateName, setCandidateName] = useState('');
   const [currentRole, setCurrentRole] = useState('');
@@ -13,14 +16,34 @@ export default function SummarizeNotes() {
   const [location, setLocation] = useState('');
   const [salary, setSalary] = useState('');
   const [stage, setStage] = useState('Recruiter Screen');
+  
+  const [isParsingCv, setIsParsingCv] = useState(false);
 
+  // Summarize Settings
   const [inputNotes, setInputNotes] = useState('');
+  const [outputFormat, setOutputFormat] = useState('brief');
   const [isProcessing, setIsProcessing] = useState(false);
   const [summary, setSummary] = useState('');
   
   // Audit Trail State
   const [auditState, setAuditState] = useState<AuditState>('waiting');
   const [originalSummary, setOriginalSummary] = useState('');
+
+  const handleParseCv = () => {
+    setIsParsingCv(true);
+    // Simulate auto-filling from CV / LinkedIn
+    setTimeout(() => {
+      setCandidateName('Jordan Lee');
+      setCurrentRole('Frontend Software Engineer');
+      setYoe('5');
+      setTargetRole('Senior Frontend Engineer');
+      setLocation('New York, NY (Remote)');
+      setSalary('$165,000');
+      setStage('Hiring Manager');
+      setIsParsingCv(false);
+      showToast('Candidate profile auto-filled from CV!');
+    }, 1500);
+  };
 
   const handleGenerate = () => {
     if (!inputNotes.trim()) return;
@@ -31,7 +54,43 @@ export default function SummarizeNotes() {
     
     // Simulate AI processing time
     setTimeout(() => {
-      const generated = `## Candidate Summary for ${candidateName || 'Candidate'}
+      let generated = '';
+      const name = candidateName || 'Candidate';
+      const role = currentRole || 'an Engineer';
+      const yrs = yoe || 'Several';
+      
+      if (outputFormat === 'exec') {
+        generated = `## Executive Summary: ${name}
+**Verdict:** Strong match for ${targetRole || 'open role'}.
+
+**Quick Facts:**
+- **Experience:** ${yrs} years, currently ${role}
+- **Compensation:** ${salary || 'TBD'}
+- **Location:** ${location || 'TBD'}
+
+**Top Strengths:**
+Extensive modern frontend stack experience, proven mentorship, strong communication.
+
+**Open Questions:**
+Needs validation on cloud infrastructure experience.`;
+      } else if (outputFormat === 'hiring_manager') {
+         generated = `## Technical Deep-Dive: ${name}
+         
+**Overall Assessment:** highly proficient in React and component architecture.
+
+**Technical Competencies:**
+- **Frontend Architecture:** Excellent grasp of state management and rendering loops.
+- **Code Quality:** Writes clean, modular code. Pair programming session passed with flying colors.
+- **System Design:** Solid, but could benefit from targeted questions on distributed micro-frontends.
+
+**Experience Profile:**
+- ${yrs} years experience, ${role}
+- Mentored 2 junior engineers, improving velocity.
+
+**Areas for Clarification:**
+- Validate deep experience with CI/CD pipelines.`;
+      } else {
+        generated = `## Candidate Summary for ${name}
 
 **Strengths:**
 - Strong communication skills
@@ -39,7 +98,7 @@ export default function SummarizeNotes() {
 - Good problem solving approach during the pair programming session
 
 **Experience Highlights:**
-- ${yoe || 'Several'} years of experience, recently as ${currentRole || 'an Engineer'}
+- ${yrs} years of experience, recently as ${role}
 - Mentored 2 junior developers
 
 **Areas for Clarification (Open Questions):**
@@ -49,6 +108,7 @@ export default function SummarizeNotes() {
 
 **Recommendation:**
 Proceed to next stage past ${stage}, focusing on architectural system design.`;
+      }
 
       setSummary(generated);
       setOriginalSummary(generated);
@@ -67,14 +127,25 @@ Proceed to next stage past ${stage}, focusing on architectural system design.`;
   const handleApprove = () => {
     setAuditState('approved');
     navigator.clipboard.writeText(summary);
+    showToast('Summary successfully copied to ATS!');
   };
 
   return (
     <div className="summarize-container">
       <div className="input-section glass-panel">
         <div className="section-header flex-between mb-sm">
-          <h3>Candidate Profile & Notes</h3>
-          <span className="badge">Inputs</span>
+          <div className="flex-center gap-sm">
+            <h3>Candidate Profile & Notes</h3>
+            <span className="badge">Inputs</span>
+          </div>
+          <button 
+            className="secondary-button flex-center gap-sm"
+            onClick={handleParseCv}
+            disabled={isParsingCv}
+          >
+            {isParsingCv ? <span className="spinner" style={{width: 14, height: 14, borderTopColor: 'var(--accent-primary)'}}></span> : <FileSearch size={14} />}
+            {isParsingCv ? 'Parsing...' : 'Simulate: Parse CV'}
+          </button>
         </div>
         
         <div className="profile-grid">
@@ -123,7 +194,21 @@ Proceed to next stage past ${stage}, focusing on architectural system design.`;
           />
         </div>
 
-        <div className="action-row">
+        <div className="action-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '1rem' }}>
+            <label style={{ margin: 0 }}>Output Format:</label>
+            <select 
+              className="styled-input" 
+              style={{ width: 'auto', minWidth: '220px' }}
+              value={outputFormat}
+              onChange={(e) => setOutputFormat(e.target.value)}
+            >
+              <option value="brief">Standard Recruiter Brief</option>
+              <option value="exec">Executive Summary</option>
+              <option value="hiring_manager">Hiring Manager Deep-Dive</option>
+            </select>
+          </div>
+          
           <button 
             className="primary-button flex-center gap-sm" 
             onClick={handleGenerate}
@@ -161,6 +246,7 @@ Proceed to next stage past ${stage}, focusing on architectural system design.`;
                   <div className="trace-badges">
                     <span className="trace-badge"><FileText size={12}/> Interview Notes</span>
                     {candidateName && <span className="trace-badge"><User size={12}/> Profile: {candidateName}</span>}
+                    {isParsingCv && <span className="trace-badge"><FileSearch size={12}/> Parsed CV</span>}
                     <span className="trace-badge"><Activity size={12}/> Stage: {stage}</span>
                   </div>
                 </div>
