@@ -9,8 +9,30 @@ export default function RefineJD() {
   const [jobTitle, setJobTitle] = useState('');
   const [tone, setTone] = useState('modern');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isFillingMock, setIsFillingMock] = useState(false);
   const [refinedJd, setRefinedJd] = useState('');
   const [isApproved, setIsApproved] = useState(false);
+
+  const handleFillMockData = () => {
+    setIsFillingMock(true);
+    setTimeout(() => {
+      setJobTitle('Senior Backend Engineer');
+      setTone('inclusive');
+      setOldJd(`REQUIREMENTS:
+- Must have 10+ years of hardcore coding experience.
+- Ninja level skills in Java and Spring Boot.
+- Willing to hustle and work long hours in a fast-paced environment.
+- Bachelor's degree from a top tier university.
+- If you can't handle pressure, do not apply.
+
+RESPONSIBILITIES:
+- Write code.
+- Manage databases.
+- Fix all production bugs.`);
+      setIsFillingMock(false);
+      showToast('Legacy JD inputs filled with mock data!');
+    }, 800);
+  };
 
   const handleRefine = () => {
     if (!oldJd.trim()) return;
@@ -80,8 +102,18 @@ As a ${title}, you will play a critical role in shaping our core products. You'l
     <div className="refine-container">
       <div className="input-section glass-panel">
         <div className="section-header flex-between mb-sm">
-          <h3>Legacy Job Description</h3>
-          <span className="badge">Inputs</span>
+          <div className="flex-center gap-sm">
+            <h3>Legacy Job Description</h3>
+            <span className="badge">Inputs</span>
+          </div>
+          <button 
+            className="secondary-button flex-center gap-sm"
+            onClick={handleFillMockData}
+            disabled={isFillingMock}
+          >
+            {isFillingMock ? <span className="spinner" style={{width: 14, height: 14, borderTopColor: 'var(--accent-primary)'}}></span> : <Wand2 size={14} />}
+            {isFillingMock ? 'Filling...' : 'Fill Mock Data'}
+          </button>
         </div>
         
         <div className="settings-row" style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>

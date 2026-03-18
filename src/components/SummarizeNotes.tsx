@@ -29,9 +29,9 @@ export default function SummarizeNotes() {
   const [auditState, setAuditState] = useState<AuditState>('waiting');
   const [originalSummary, setOriginalSummary] = useState('');
 
-  const handleParseCv = () => {
+  const handleFillMockData = () => {
     setIsParsingCv(true);
-    // Simulate auto-filling from CV / LinkedIn
+    // Simulate auto-filling mock data in all fields
     setTimeout(() => {
       setCandidateName('Jordan Lee');
       setCurrentRole('Frontend Software Engineer');
@@ -40,9 +40,13 @@ export default function SummarizeNotes() {
       setLocation('New York, NY (Remote)');
       setSalary('$165,000');
       setStage('Hiring Manager');
+      setInputNotes(`Interviewed Jordan for the Sr FE role. 
+Technical skills: Very strong React knowledge. Answered the event loop and closure questions perfectly. Highlighted his work on a React micro-frontend architecture.
+Soft skills: Great communicator, very collaborative. Mentored two juniors.
+Concerns: Hasn't managed cloud deployments directly. Salary expectation is $165k which is at the absolute top of our band. Wants to remain fully remote.`);
       setIsParsingCv(false);
-      showToast('Candidate profile auto-filled from CV!');
-    }, 1500);
+      showToast('All fields filled with mock data!');
+    }, 800);
   };
 
   const handleGenerate = () => {
@@ -140,11 +144,11 @@ Proceed to next stage past ${stage}, focusing on architectural system design.`;
           </div>
           <button 
             className="secondary-button flex-center gap-sm"
-            onClick={handleParseCv}
+            onClick={handleFillMockData}
             disabled={isParsingCv}
           >
             {isParsingCv ? <span className="spinner" style={{width: 14, height: 14, borderTopColor: 'var(--accent-primary)'}}></span> : <FileSearch size={14} />}
-            {isParsingCv ? 'Parsing...' : 'Simulate: Parse CV'}
+            {isParsingCv ? 'Filling...' : 'Fill Mock Data'}
           </button>
         </div>
         

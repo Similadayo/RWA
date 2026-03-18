@@ -10,8 +10,21 @@ export default function DraftOutreach() {
   const [outreachType, setOutreachType] = useState('initial');
   const [tone, setTone] = useState('professional');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isFillingMock, setIsFillingMock] = useState(false);
   const [draft, setDraft] = useState('');
   const [isApproved, setIsApproved] = useState(false);
+
+  const handleFillMockData = () => {
+    setIsFillingMock(true);
+    setTimeout(() => {
+      setCandidateName('Alex M.');
+      setRoleContext('We loved your system design whiteboard session. We want to invite you to the final round with the VP of Engineering. The role is Senior Backend Engineer, focusing on our new Go microservices.');
+      setOutreachType('follow-up');
+      setTone('warm');
+      setIsFillingMock(false);
+      showToast('Outreach inputs filled with mock data!');
+    }, 800);
+  };
 
   const handleGenerate = () => {
     if (!candidateName.trim() || !roleContext.trim()) return;
@@ -69,8 +82,18 @@ export default function DraftOutreach() {
     <div className="draft-container">
       <div className="input-section glass-panel">
         <div className="section-header flex-between mb-sm">
-          <h3>Context & Requirements</h3>
-          <span className="badge">Config</span>
+          <div className="flex-center gap-sm">
+            <h3>Context & Requirements</h3>
+            <span className="badge">Config</span>
+          </div>
+          <button 
+            className="secondary-button flex-center gap-sm"
+            onClick={handleFillMockData}
+            disabled={isFillingMock}
+          >
+            {isFillingMock ? <span className="spinner" style={{width: 14, height: 14, borderTopColor: 'var(--accent-primary)'}}></span> : <Sparkles size={14} />}
+            {isFillingMock ? 'Filling...' : 'Fill Mock Data'}
+          </button>
         </div>
         
         <div className="form-grid">
