@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { 
   Briefcase, 
-  FileText, 
   MessageSquare, 
   Search, 
   Settings,
@@ -10,6 +9,7 @@ import {
 } from 'lucide-react';
 import './App.css';
 import SummarizeNotes from './components/SummarizeNotes';
+import DraftOutreach from './components/DraftOutreach';
 
 type WorkflowType = 'summarize' | 'draft' | 'search' | 'refine';
 
@@ -21,15 +21,7 @@ function App() {
       case 'summarize':
         return <SummarizeNotes />;
       case 'draft':
-        return (
-          <div className="glass-panel" style={{ padding: '2rem' }}>
-            <h2>Recruiter Follow-up Draft</h2>
-            <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-              Generate follow-up emails or outreach messages based on candidate context.
-            </p>
-            {/* Future Form Here */}
-          </div>
-        );
+        return <DraftOutreach />;
       case 'search':
       case 'refine':
       default:
