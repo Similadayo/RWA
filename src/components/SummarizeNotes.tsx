@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Sparkles, FileText, Check, Copy } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, Check, Copy } from 'lucide-react';
 import './SummarizeNotes.css';
 
 export default function SummarizeNotes() {
