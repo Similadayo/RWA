@@ -9,6 +9,7 @@ import {
   Zap
 } from 'lucide-react';
 import './App.css';
+import SummarizeNotes from './components/SummarizeNotes';
 
 type WorkflowType = 'summarize' | 'draft' | 'search' | 'refine';
 
@@ -18,15 +19,7 @@ function App() {
   const renderContent = () => {
     switch (activeWorkflow) {
       case 'summarize':
-        return (
-          <div className="glass-panel" style={{ padding: '2rem' }}>
-            <h2>Summarize Candidate Notes</h2>
-            <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-              Paste messy interview notes here to generate a clean, structured candidate summary.
-            </p>
-            {/* Future Form Here */}
-          </div>
-        );
+        return <SummarizeNotes />;
       case 'draft':
         return (
           <div className="glass-panel" style={{ padding: '2rem' }}>
