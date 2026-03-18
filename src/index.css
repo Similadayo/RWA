@@ -1,41 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
   /* Colors */
-  --bg-primary: #0f1115;
-  --bg-secondary: #1a1d24;
-  --bg-tertiary: #252932;
+  --bg-primary: #0a0c10;
+  --bg-secondary: transparent; 
+  --bg-tertiary: rgba(37, 41, 50, 0.5);
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
   
-  --accent-primary: #3b82f6;
-  --accent-primary-hover: #2563eb;
-  --accent-secondary: #8b5cf6;
+  --accent-primary: #4f46e5;
+  --accent-primary-hover: #4338ca;
+  --accent-secondary: #06b6d4;
+  --accent-tertiary: #a855f7;
+  
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
 
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(59, 130, 246, 0.5);
+  --border-color: rgba(255, 255, 255, 0.05);
+  --border-focus: rgba(79, 70, 229, 0.5);
 
   /* Typography */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Outfit', system-ui, serif;
   
   /* Layout */
-  --sidebar-width: 260px;
-  --header-height: 64px;
-  --border-radius-sm: 6px;
-  --border-radius-md: 10px;
-  --border-radius-lg: 16px;
+  --sidebar-width: 280px;
+  --header-height: 72px;
+  --border-radius-sm: 8px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 24px;
   
   /* Shadows & Glassmorphism */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-  --glass-bg: rgba(26, 29, 36, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 40px -8px rgba(0, 0, 0, 0.6);
+  --glass-bg: rgba(18, 20, 27, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.07);
 }
 
 * {
@@ -48,19 +51,36 @@ body {
   font-family: var(--font-family);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
-/* Utilities */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Base Glassmorphism utility */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-border);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle inner glow for glass panels */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.1), rgba(255,255,255,0));
+  pointer-events: none;
 }
 
 .flex-center {
@@ -76,13 +96,12 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, var(--accent-tertiary), var(--accent-primary), var(--accent-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Button Reset */
 button {
   font-family: inherit;
   cursor: pointer;
@@ -91,12 +110,10 @@ button {
   color: inherit;
 }
 
-/* Inputs */
-input, textarea {
+input, textarea, select {
   font-family: inherit;
 }
 
-/* Scrollbar styling for sleekness */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -107,10 +124,10 @@ input, textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
+  background: rgba(255,255,255,0.1);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: rgba(255,255,255,0.2);
 }
